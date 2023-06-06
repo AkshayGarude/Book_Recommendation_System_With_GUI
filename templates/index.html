@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .recommended-books {
+            margin-top: 20px;
+        }
+        .recommended-books ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .recommended-books li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Book Recommender</h1>
+        <form method="POST" action="/recommend">
+            <label for="book_name">Enter a Book Title:</label>
+            <input type="text" id="book_name" name="book_name">
+            <input type="submit" value="Recommend">
+        </form>
+        <div class="recommended-books">
+            <h2>Recommended Books:</h2>
+            <ul id="recommended_list"></ul>
+        </div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var bookName = document.querySelector('#book_name').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/recommend', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var recommendedBooks = JSON.parse(xhr.responseText).recommended_books;
+                    var list = document.querySelector('#recommended_list');
+                    list.innerHTML = '';
+                    recommendedBooks.forEach(function(book) {
+                        var li = document.createElement('li');
+                        li.textContent = book;
+                        list.appendChild(li);
+                    });
+                }
+            };
+            xhr.send('book_name=' + encodeURIComponent(bookName));
+        });
+    </script>
+</body>
+</html>
